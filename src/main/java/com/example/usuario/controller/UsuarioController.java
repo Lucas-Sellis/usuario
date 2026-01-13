@@ -12,14 +12,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping
+@RequestMapping ("/usuario")
 @RequiredArgsConstructor
 
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
     private final AuthenticationManager authenticationManager;
-    private JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
 
     @PostMapping
     public ResponseEntity<UsuarioDTO> salvaUsuario(@RequestBody UsuarioDTO usuarioDTO){
@@ -60,6 +60,12 @@ public class UsuarioController {
 
         usuarioService.deletaUsuarioPorEmail(email);
         return ResponseEntity.ok().build();
+    }
+
+    @PutMapping
+    public ResponseEntity<UsuarioDTO> atualizaDadoUsuario (@RequestBody UsuarioDTO dto,
+                                                           @RequestHeader("Authorization") String token){
+        return ResponseEntity.ok(usuarioService.atualizaDadosUsuario(token,dto));
     }
 }
 
