@@ -1,6 +1,8 @@
 package com.example.usuario.controller;
 
 import com.example.usuario.business.UsuarioService;
+import com.example.usuario.business.dto.EnderecoDTO;
+import com.example.usuario.business.dto.TelefoneDTO;
 import com.example.usuario.business.dto.UsuarioDTO;
 import com.example.usuario.infrastructure.entity.Usuario;
 import com.example.usuario.infrastructure.security.JwtUtil;
@@ -22,12 +24,12 @@ public class UsuarioController {
     private final JwtUtil jwtUtil;
 
     @PostMapping
-    public ResponseEntity<UsuarioDTO> salvaUsuario(@RequestBody UsuarioDTO usuarioDTO){
+    public ResponseEntity<UsuarioDTO> salvaUsuario(@RequestBody UsuarioDTO usuarioDTO) {
         return ResponseEntity.ok(usuarioService.salvaUsuario((usuarioDTO)));
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody UsuarioDTO usuarioDTO){
+    public String login(@RequestBody UsuarioDTO usuarioDTO) {
 
         // valida email e senha
         Authentication authentication = authenticationManager.authenticate(
@@ -44,14 +46,13 @@ public class UsuarioController {
     // GET /usuario?email=...
     // busca usuário pelo email
     @GetMapping
-    public ResponseEntity<Usuario> buscaUsuarioPorEmail(
+    public ResponseEntity<UsuarioDTO> buscaUsuarioPorEmail(
             @RequestParam("email") String email) {
 
         return ResponseEntity.ok(
                 usuarioService.buscarUsuarioPorEmail(email)
         );
     }
-
 
 
     @DeleteMapping("/{email}")
@@ -62,11 +63,26 @@ public class UsuarioController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping
-    public ResponseEntity<UsuarioDTO> atualizaDadoUsuario (@RequestBody UsuarioDTO dto,
-                                                           @RequestHeader("Authorization") String token){
-        return ResponseEntity.ok(usuarioService.atualizaDadosUsuario(token,dto));
+    @PutMapping // Endpoint HTTP do tipo PUT (usado para atualização de dados)
+    public ResponseEntity<UsuarioDTO> atualizaDadoUsuario(
+            @RequestBody UsuarioDTO dto, // Pega o JSON enviado no corpo da requisição e converte para DTO
+            @RequestHeader("Authorization") String token) { // Pega o token JWT que veio no header "Authorization"
+
+        // Chama o serviço para atualizar os dados do usuário usando o token + os dados enviados
+        // e retorna a resposta HTTP 200 (OK) com o DTO do usuário atualizado
+        return ResponseEntity.ok(usuarioService.atualizaDadosUsuario(token, dto));
+    }
+
+    @PutMapping("/endereco")
+    public ResponseEntity<EnderecoDTO> atualizaEndereco(@RequestBody EnderecoDTO dto,
+                                                        @RequestParam("id") Long id) {
+        return ResponseEntity.ok(usuarioService.atualizaEndereco(id, dto));
+    }
+
+    @PutMapping("/telefone")
+    public ResponseEntity<TelefoneDTO> atualizaTelefone(@RequestBody TelefoneDTO dto,
+                                                        @RequestParam("id") Long id) {
+        return ResponseEntity.ok(usuarioService.atualizaTelefone(id, dto));
     }
 }
-
 
