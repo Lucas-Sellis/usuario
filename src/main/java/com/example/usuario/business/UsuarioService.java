@@ -63,7 +63,7 @@ public class UsuarioService {
     }
 
 
-    public UsuarioDTO buscarUsuarioPorEmail(String email) {
+    public UsuarioDTO buscarUsuarioPorEmail(String email) {  // foi alterado isso aqui
         try {
             // Busca no banco: se não achar, lança a exceção de "Não Encontrado"
             return usuarioConverter.paraUsuarioDTO(
@@ -112,27 +112,83 @@ public class UsuarioService {
     }
 
 
-    public EnderecoDTO atualizaEndereco(Long idEndereco, EnderecoDTO enderecoDTO){ // nao entendi nada desse metodo
+    public EnderecoDTO atualizaEndereco(Long idEndereco, EnderecoDTO enderecoDTO) {
 
-        Endereco entity = enderecoRepository.findById(idEndereco).orElseThrow(() ->
+        // 1. Busca o endereço no banco pelo ID.
+        //    Se não existir, lança uma exceção informando que o ID não foi encontrado.
+        Endereco entity = enderecoRepository.findById(idEndereco)
+                .orElseThrow(() -> new ResourceNotFoundException("Id não encontrado " + idEndereco));
 
-                new ResourceNotFoundException("Id não encontrado" + idEndereco));
-
+        // 2. Atualiza a entidade existente com os novos dados vindos do DTO.
+        //    Esse update é feito no converter para não sujar o service.
         Endereco endereco = usuarioConverter.updateEndereco(enderecoDTO, entity);
 
+        // 3. Salva o endereço atualizado no banco e converte de volta para DTO
+        //    antes de retornar para o controller.
         return usuarioConverter.paraEnderecoDTO(enderecoRepository.save(endereco));
     }
 
-    public TelefoneDTO atualizaTelefone(Long idTelefone, TelefoneDTO dto){
-        Telefone entity = telefoneRepository.findById(idTelefone).orElseThrow(()->
-                new ResourceNotFoundException("id nao encontrado " + idTelefone));
 
+    public TelefoneDTO atualizaTelefone(Long idTelefone, TelefoneDTO dto) {
+
+        // 1. Busca o telefone no banco pelo ID.
+        //    Se o ID não existir, lança exceção.
+        Telefone entity = telefoneRepository.findById(idTelefone)
+                .orElseThrow(() -> new ResourceNotFoundException("id nao encontrado " + idTelefone));
+
+        // 2. Atualiza a entidade existente com os novos dados do DTO.
+        //    A lógica fica dentro do converter para evitar repetição.
         Telefone telefone = usuarioConverter.updateTelefone(dto, entity);
 
+        // 3. Salva no banco e devolve o retorno já convertido para DTO.
         return usuarioConverter.paraTelefoneDTO(telefoneRepository.save(telefone));
-
-
     }
+
+    public EnderecoDTO cadastraEndereco(String token, EnderecoDTO dto){
+        // método público que qualquer um pode chamar
+        // ele devolve um endereço e serve para cadastrar um endereço
+        // ele recebe um token e um endereço novo
+
+        String email = jwtUtil.extractUsername(token.substring(7));
+        // aqui ele puxa o email de dentro do token
+
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("email não localizado " + email));
+        // aqui ele vai no banco e procura o usuário pelo email para pegar o id
+        // se não encontrar o usuário, ele dá um erro dizendo que o email não existe
+
+        Endereco endereco = usuarioConverter.paraEnderecoEntity(dto, usuario.getId());
+        // converte o DTO (modelo que vem de fora) para um Endereco (modelo que o banco entende)
+        // e coloca o id do usuário junto
+
+        Endereco enderecoEntity = enderecoRepository.save(endereco);
+        // salva o endereço convertido no banco
+
+        return usuarioConverter.paraEnderecoDTO(enderecoEntity);
+        // converte de novo para DTO e devolve para a controller
+    }
+
+
+
+    public TelefoneDTO cadastraTelefone(String token, TelefoneDTO dto) {
+        // 1. Extração do e-mail (lembre-se de tratar o "Bearer " se necessário)
+        String email = jwtUtil.extractUsername(token.substring(7));
+
+        // 2. Busca do usuário
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Email não localizado: " + email));
+
+        // 3. Conversão (Ajustado para o nome correto do método no Converter)
+        Telefone telefone = usuarioConverter.paraTelefoneEntity(dto, usuario.getId());
+
+        // 4. Persistência
+        Telefone telefoneEntity = telefoneRepository.save(telefone);
+
+        // 5. Retorno convertido para DTO
+        return usuarioConverter.paraTelefoneDTO(telefoneEntity);
+    }
+
 
 
 
