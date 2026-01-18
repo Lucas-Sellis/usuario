@@ -13,7 +13,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Builder //@Builder é para criar objetos complexos de forma clara, sem precisar construtor gigante ou muitos setters.
 
 // Diz para o JPA que essa classe vira uma tabela no banco
 @Entity
