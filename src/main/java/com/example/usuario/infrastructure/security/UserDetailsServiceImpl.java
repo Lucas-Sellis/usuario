@@ -2,7 +2,7 @@ package com.example.usuario.infrastructure.security;
 
 
 import com.example.usuario.infrastructure.entity.Usuario;
-import com.example.usuario.infrastructure.repository.repository.UsuarioRepository;
+import com.example.usuario.infrastructure.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -2,7 +2,6 @@ package com.example.usuario.infrastructure.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -71,7 +70,7 @@ public class Usuario implements UserDetails {
 
     // Retorna a senha para o Spring Security
     @Override
-    public @Nullable String getPassword() {
+    public  String getPassword() {
         return senha;
     }
 

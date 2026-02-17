@@ -1,4 +1,4 @@
-package com.example.usuario.infrastructure.repository.repository;
+package com.example.usuario.infrastructure.repository;
 
 import com.example.usuario.infrastructure.entity.Endereco;
 import org.springframework.data.jpa.repository.JpaRepository;
