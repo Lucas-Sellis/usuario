@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/usuario")
 @RequiredArgsConstructor
-@Tag(name = "Usuários", description = "Cadastro de usuários")
+@Tag(name = "Usuários", description = "Operações de cadastro e login de usuários")
 @SecurityRequirement(name = SecurityConfig.SECURITY_SCHEME)
 public class UsuarioController {
 
