@@ -25,4 +25,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> UnauthorizedExeception(ConflictException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public  ResponseEntity<String>IllegalArgumentException(IllegalArgumentException ex){
+        return  new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }
