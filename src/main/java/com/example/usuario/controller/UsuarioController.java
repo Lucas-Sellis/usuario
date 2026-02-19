@@ -45,15 +45,12 @@ public class UsuarioController {
     @ApiResponse(responseCode = "200", description = "Usuário logado com sucesso")
     @ApiResponse(responseCode = "401", description = "Credenciais inválidas")
     @ApiResponse(responseCode = "500", description = "Erro de servidor")
-    public String login(@RequestBody UsuarioDTO usuarioDTO) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        usuarioDTO.getEmail(),
-                        usuarioDTO.getSenha()
-                )
-        );
-        return "Bearer " + jwtUtil.generateToken(authentication.getName());
+    public ResponseEntity<String> login(@RequestBody UsuarioDTO usuarioDTO) {
+            return ResponseEntity.ok(usuarioService.autenticarUsuario(usuarioDTO));
     }
+
+
+
 
     @GetMapping
     @Operation(summary = "Buscar dados de Usuários por Email", description = "Buscar dados do usuário")
