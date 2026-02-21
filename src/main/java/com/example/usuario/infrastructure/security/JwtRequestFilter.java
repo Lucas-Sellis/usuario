@@ -1,5 +1,6 @@
 package com.example.usuario.infrastructure.security;
 
+import com.example.usuario.infrastructure.exceptions.JsonSerializationException;
 import com.example.usuario.infrastructure.exceptions.dto.ErrorResponseDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -62,7 +63,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         }
     }
 
-    private String buildError(int status, String mensagem, String path, String error){
+    private String buildError(int status, String mensagem, String path, String error) {
         ErrorResponseDTO errorResponseDTO = ErrorResponseDTO.builder()
                 .timestamp(LocalDateTime.now())
                 .message(mensagem)
@@ -78,7 +79,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         try {
             return objectMapper.writeValueAsString(errorResponseDTO);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            throw new JsonSerializationException(
+                    "Erro ao serializar ErrorResponseDTO para JSON", e
+            );
         }
     }
 }
